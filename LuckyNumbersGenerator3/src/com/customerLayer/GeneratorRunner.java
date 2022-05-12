@@ -15,7 +15,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class GeneratorRunner {
 
 	public static void main(String[] args) throws IOException {
-
+		
+		//=====================BufferReader check all winning nums and put them in arrayList
 		ArrayList<ArrayList<Byte>> arrayListOfWinningNums = new ArrayList<>();
         try {
             BufferedReader in = new BufferedReader(new FileReader("./Resources/winningNums.text"));
@@ -32,8 +33,10 @@ public class GeneratorRunner {
         }
         catch(Exception e) {
         }
+        //============================end
         
         
+        //creating copyOnWrite list for further use
         List<ArrayList<Byte>> copyOnWrite = new CopyOnWriteArrayList<>();
         copyOnWrite = arrayListOfWinningNums;
         
@@ -166,11 +169,10 @@ public class GeneratorRunner {
         int uniqueCombinations = possibleComb(6)-winning6.size();
         //====================End
         
+        //====================Print Data from database
         System.out.println();
         System.out.printf("Size of database is: %d records",arrayListOfWinningNums.size()).println();
         System.out.println();
-        
-        //====================Print Data from database
         System.out.println("  Number of element used | Number of unique element | Minimal element use | Avarage Element use | Maximal element use");
         System.out.printf ("  Number:             %s |                        %s |                 %s |                 %s |                 %s", winning1.size(), uniqueNum , numMin, Math.round(numAvarageUse), numMax).println();
         System.out.printf ("  Pairs:            %s |                        %s |                  %s |                  %s |                %s", winning2.size(), uniquePairs , pairMin, Math.round(pairAvarageUse), pairMax).println();
@@ -178,7 +180,10 @@ public class GeneratorRunner {
         System.out.printf("  Quadruplet:      %s |                   %s |                   %s |                   %s |                   %s", winning4.size(), uniqueQuad , fourMin, Math.round(fourAvarageUse), fourMax).println();
         System.out.printf("  Pentad:          %s |                  %s |                   %s |                   %s |                   %s", winning5.size(), uniquePentad , fiveMin, Math.round(fiveAvarageUse), fiveMax).println();
         System.out.printf("Winning numbers:    %s |                  %s |                   %s |                   %s |                   %s", winning6.size(), uniqueCombinations, sixMin, Math.round(sixAvarageUse), sixMax).println();
+        //=====================Printer end
         
+        
+        //=================initialize variables
         short luckyNumsMinUse = 0;
         int luckyNumsMaxUse = numMax;
         short lucky2minUse = 0;
@@ -188,7 +193,11 @@ public class GeneratorRunner {
         short lucky4minUse = 0;
         int lucky4maxUse = fourMax;
         boolean useUnique5 = false;
+        int numberOfTickets = 0;
+        //=================end
         
+        
+        //=============================scanner and settings menu
         System.out.println();
         System.out.println("Do you want to add more criteria? (Y - yes please/ N - no thanks)");
         Scanner scanner = new Scanner(System.in, "Windows-1250");
@@ -279,11 +288,10 @@ public class GeneratorRunner {
         	if(excludeLuckyPentad.equalsIgnoreCase("y")) {
         		useUnique5 = true;
         	}
-        	
-        	
-        	
         }
+        //=======================end of scanner
         
+        //final variables for lambdas
         final short luckyNumsMinUseFinal = luckyNumsMinUse;
         final int luckyNumsMaxUseFinal = luckyNumsMaxUse;
 		final short lucky2minUseFinal =  lucky2minUse;
@@ -292,7 +300,9 @@ public class GeneratorRunner {
 		final int lucky3maxUseFinal = lucky3maxUse;
 		final short lucky4minUseFinal =  lucky4minUse;
 		final int lucky4maxUseFinal = lucky4maxUse;
-        
+        //end
+		
+		//=====================logic for checks in generator
         boolean useLucky2;
         if(lucky2maxUse > lucky2minUse) {
         	useLucky2 = true;
@@ -326,24 +336,19 @@ public class GeneratorRunner {
         }else {
       			useLucky4 = false;
         }
+        //====================end
         
         
-        
-        //====================PairOperations
+        //====================Pair
         HashSet<Byte> lucky1 = new HashSet<>();
         winning1.keySet().stream().filter(a -> (winning1.get(a) >= luckyNumsMinUseFinal && winning1.get(a) <= luckyNumsMaxUseFinal)).forEach(a -> lucky1.add(a));
-        
-        System.out.printf("Number of lucky pairs is: %s", lucky1.size()).println();
-        
-        
+        System.out.printf("Number of lucky numbers is: %s", lucky1.size()).println();
         HashSet<Set<Byte>> lucky2 = new HashSet<>();
         winning2.keySet().stream().filter(a -> (winning2.get(a) >= lucky2minUseFinal && winning2.get(a) <= lucky2maxUseFinal)).forEach(a -> lucky2.add(a));
-        
         System.out.printf("Number of lucky pairs is: %s", lucky2.size()).println();
         //====================End
-        
-        
-        //====================TriplesOperations
+
+        //====================Triples
         HashSet<Set<Byte>> lucky3 = new HashSet<>();
         winning3.keySet().stream().filter(a -> (winning3.get(a) >= lucky3minUseFinal && winning3.get(a) <= lucky3maxUseFinal)).forEach(a -> lucky3.add(a));
         if(useUnique3) {
@@ -354,7 +359,7 @@ public class GeneratorRunner {
         //====================End
         
         
-        //====================QuadruplesOperations
+        //====================Quadruplet
         HashSet<Set<Byte>> lucky4 = new HashSet<>();
         winning4.keySet().stream().filter(a -> (winning4.get(a) >= lucky4minUseFinal && winning4.get(a) <= lucky4maxUseFinal)).forEach(a -> lucky4.add(a));
         if(useUnique4) {
@@ -362,27 +367,17 @@ public class GeneratorRunner {
         }else {
         System.out.printf("Number of lucky quadruplets is: %s", lucky4.size()).println();
         }
-        
-        //====================End
-        
-        
-        //====================SextetOperations
-        
         //====================End
         
         //====================Generator of all possible combinations
         HashSet<HashSet<Byte>> possibleComb = possibleCombGenerator(lucky2, lucky3, lucky4, winning1, winning2, winning3, winning4, winning5, winning6, useLucky2, useLucky3, useUnique3, useLucky4, useUnique4, useUnique5, luckyNumsMinUse, luckyNumsMaxUse);
         System.out.printf("Possible combinations with given criterie is: %s", possibleComb.size()).println();
 		
-        System.out.println(checkUseOfAllNums(possibleComb));
-		
+        System.out.printf("Is it posible to use all numbers from 1 to 49? + %b", checkUseOfAllNums(possibleComb)).println();
 		//====================End
         
         //====================scannerForTickets
-        int numberOfTickets = 0;
-        
         System.out.println();
-
         System.out.println("How many tickets you wish to pick?");
         String howManyTicketsSc = scanner.nextLine();
         numberOfTickets = Integer.parseInt(howManyTicketsSc);
@@ -391,6 +386,7 @@ public class GeneratorRunner {
         	numberOfTickets=0;
         }
         scanner.close();
+        
         
         //====================printer
 		for(int i = 1; i <= numberOfTickets; i++) {
